@@ -1,34 +1,61 @@
-import 'package:flutter/material.dart';
-import 'User.dart';
-import 'dart:convert';
+import 'user.dart';
 
 void main() {
-  //Konversi Object Dart ke JSON (Map<String, dynamic>)
-  print('--- Object Dart ke JSON ---');
+  print('=== DEBUG: Check JSON Structure ===');
 
   User user = User(
     id: 1,
     name: 'John Doe',
     email: 'john@example.com',
     createdAt: DateTime.now(),
-  );
+  ); // User
 
-  // Mengkonversi objek User menjadi Map JSON
   Map<String, dynamic> userJson = user.toJson();
-  print('User JSON: $userJson');
+  print('User.toJson() result: $userJson');
+  print('Field names: ${userJson.keys.toList()}');
 
-  // Konversi JSON (Map<String, dynamic>) ke Object Dart
-  print('\n--- JSON ke Object Dart ---');
-  // Contoh data JSON dalam bentuk Map
+  print('\n=== TEST: JSON to Object ===');
+
+  // GUNAKAN FIELD NAMES YANG SAMA DENGAN toJson() RESULT
   Map<String, dynamic> jsonData = {
     'id': 2,
     'name': 'Jane Doe',
     'email': 'jane@example.com',
-    'created_at': '2024-01-01T10:00:00.000Z',
+    'createdAt': '2024-01-01T10:00:00.000Z', // Perhatikan casing!
   };
 
-  // Membuat objek User dari Map JSON menggunakan factory constructor
-  User userFromJson = User.fromJson(jsonData);
-  print('User from JSON: ${userFromJson.name}');
-  print('Created At: ${userFromJson.createdAt}');
+  // Debug: Print JSON structure
+  print('JSON data to parse: $jsonData');
+  print('JSON keys: ${jsonData.keys.toList()}');
+  print('id: ${jsonData['id']} (type: ${jsonData['id'].runtimeType})');
+  print('name: ${jsonData['name']} (type: ${jsonData['name'].runtimeType})');
+  print('email: ${jsonData['email']} (type: ${jsonData['email'].runtimeType})');
+  print(
+    'createdAt: ${jsonData['createdAt']} (type: ${jsonData['createdAt'].runtimeType})',
+  );
+
+  try {
+    User userFromJson = User.fromJson(jsonData);
+    print('✅ SUCCESS: User from JSON: $userFromJson');
+  } catch (e, stack) {
+    print('❌ ERROR: $e');
+    print('Stack trace: $stack');
+  }
+
+  print('\n=== TEST: Handle Missing Fields ===');
+
+  // Test dengan missing fields
+  Map<String, dynamic> incompleteJson = {
+    'id': 3,
+    // 'name': missing
+    'email': 'test@example.com',
+    // 'createdAt': missing
+  };
+
+  try {
+    User userFromIncomplete = User.fromJson(incompleteJson);
+    print('User from incomplete JSON: $userFromIncomplete');
+  } catch (e) {
+    print('Error with incomplete JSON: $e');
+  }
 }
